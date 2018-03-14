@@ -132,21 +132,26 @@ public class ZKManager{
 	public String getConnectStr(){
 		return this.properties.getProperty(keys.zkConnectString.toString());
 	}
-	public boolean checkZookeeperState() throws Exception{
+
+	/**
+	 *  是否已经到 zk 服务器连接
+	 * @return true 已经连接
+	 */
+	public boolean checkZookeeperState() {
 		return zk != null && zk.getState() == States.CONNECTED;
 	}
 	public void initial() throws Exception {
 		//当zk状态正常后才能调用
 		if(zk.exists(this.getRootPath(), false) == null){
 			ZKTools.createPath(zk, this.getRootPath(), CreateMode.PERSISTENT, acl);
-			if(isCheckParentPath == true){
+			if(isCheckParentPath){
 			  checkParent(zk,this.getRootPath());
 			}
 			//设置版本信息
 			zk.setData(this.getRootPath(),Version.getVersion().getBytes(),-1);
 		}else{
 			//先校验父亲节点，本身是否已经是schedule的目录
-			if(isCheckParentPath == true){
+			if(isCheckParentPath){
 			   checkParent(zk,this.getRootPath());
 			}
 			byte[] value = zk.getData(this.getRootPath(), false, null);
@@ -154,7 +159,7 @@ public class ZKManager{
 				zk.setData(this.getRootPath(),Version.getVersion().getBytes(),-1);
 			}else{
 				String dataVersion = new String(value);
-				if(Version.isCompatible(dataVersion)==false){
+				if(!Version.isCompatible(dataVersion)){
 					throw new Exception("TBSchedule程序版本 "+ Version.getVersion() +" 不兼容Zookeeper中的数据版本 " + dataVersion );
 				}
 				log.info("当前的程序版本:" + Version.getVersion() + " 数据版本: " + dataVersion);
@@ -166,13 +171,13 @@ public class ZKManager{
 		String zkPath = "";
 		for (int i =0;i< list.length -1;i++){
 			String str = list[i];
-			if (str.equals("") == false) {
+			if (!str.equals("")) {
 				zkPath = zkPath + "/" + str;
 				if (zk.exists(zkPath, false) != null) {
 					byte[] value = zk.getData(zkPath, false, null);
 					if(value != null){
 						String tmpVersion = new String(value);
-					   if(tmpVersion.indexOf("taobao-pamirs-schedule-") >=0){
+					   if(tmpVersion.contains("taobao-pamirs-schedule-")){
 						throw new Exception("\"" + zkPath +"\"  is already a schedule instance's root directory, its any subdirectory cannot as the root directory of others");
 					}
 				}
@@ -185,7 +190,7 @@ public class ZKManager{
 		return acl;
 	}
 	public ZooKeeper getZooKeeper() throws Exception {
-		if(this.checkZookeeperState()==false){
+		if(!this.checkZookeeperState()){
 			reConnection();
 		}
 		return this.zk;

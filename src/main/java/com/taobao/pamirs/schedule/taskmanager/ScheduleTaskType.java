@@ -72,7 +72,7 @@ public class ScheduleTaskType implements java.io.Serializable {
     private double expireOwnSignInterval = 1;
     
     /**
-     * 处理任务的BeanName
+     * 处理任务的 spring BeanName
      */
     private String dealBeanName;
     /**

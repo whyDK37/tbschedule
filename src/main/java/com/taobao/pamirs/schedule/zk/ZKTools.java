@@ -10,6 +10,9 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
 
+/**
+ * zk π§æﬂ¿‡
+ */
 public class ZKTools {
 	public static void createPath(ZooKeeper zk, String path,CreateMode createMode, List<ACL> acl) throws Exception {
 		String[] list = path.split("/");
@@ -62,6 +65,6 @@ public class ZKTools {
 		   }
 		   index++;
 	   }
-	   return (String[])dealList.toArray(new String[0]);
+	   return dealList.toArray(new String[0]);
    }
 }

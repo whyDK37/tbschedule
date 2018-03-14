@@ -37,21 +37,21 @@ public class DemoTaskBean implements IScheduleTaskDealSingle<Long> {
 		List<Long> result = new ArrayList<Long>();
 		int num = fetchNum / queryCondition.size();
 		Random random = new Random(System.currentTimeMillis());
-		String message = "获取数据...[ownSign=" + ownSign + ",taskParameter=\"" + taskParameter +"\"]:";
+		StringBuilder message = new StringBuilder("获取数据...[ownSign=" + ownSign + ",taskParameter=\"" + taskParameter + "\"]:");
 		boolean isFirst = true;
 		for (TaskItemDefine s : queryCondition) {
 			long taskItem = Integer.parseInt(s.getTaskItemId()) * 10000000L;
 			for (int i = 0; i < num; i++) {
 				result.add(taskItem + random.nextLong()% 100000L);
 			}
-			if (isFirst == false) {
-				message = message + ",";				
+			if (!isFirst) {
+				message.append(",");
 			}else{
 				isFirst = false;
 			}
-			message = message + s.getTaskItemId() + "{" + s.getParameter() +"}";
+			message.append(s.getTaskItemId()).append("{").append(s.getParameter()).append("}");
 		}
-		log.info(message);
+		log.info(message.toString());
 		return result;
 	}
 

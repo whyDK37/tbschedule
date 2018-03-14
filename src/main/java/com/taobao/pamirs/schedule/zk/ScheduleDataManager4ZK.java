@@ -657,10 +657,22 @@ public class ScheduleDataManager4ZK implements IScheduleDataManager {
     public boolean isLeader(String uuid,List<String> serverList){
     	return uuid.equals(getLeader(serverList));
     }
-	@Override
+
+	/**
+	 * 其中的this.assignScheduleTask();实现了任务调度管理器的变化而相应的修改/taskItem下curr_server和req_server的调度变化。
+	 *
+	 * 核心思想：rewriteScheduleInfo()中没有相应的调度服务器，则在/server下注册。然后获取有效的所有调度服务器，遍历所有任务项，
+	 * 如果发现该任务项的curr_server表示的manager不存在，则设置null。然后对所有的任务分片重新分配调度服务器，具体算法如下：
+	 * @param taskType
+	 * @param currentUuid
+	 * @param maxNumOfOneServer
+	 * @param taskServerList
+	 * @throws Exception
+	 */
+    @Override
 	public void assignTaskItem(String taskType, String currentUuid,int maxNumOfOneServer,
 			List<String> taskServerList) throws Exception {
-		 if(this.isLeader(currentUuid,taskServerList)==false){
+		 if(!this.isLeader(currentUuid, taskServerList)){
 			 if(log.isDebugEnabled()){
 			   log.debug(currentUuid +":不是负责任务分配的Leader,直接返回");
 			 }
@@ -716,7 +728,7 @@ public class ScheduleDataManager4ZK implements IScheduleDataManager {
 			if(curServerValue == null || new String(curServerValue).equals(NO_SERVER_DEAL)){
 				this.getZooKeeper().setData(zkPath + "/" + name + "/cur_server",serverName.getBytes(),-1);
 				this.getZooKeeper().setData(zkPath + "/" + name + "/req_server",null,-1);
-			}else if(new String(curServerValue).equals(serverName)==true && reqServerValue == null ){
+			}else if(new String(curServerValue).equals(serverName) && reqServerValue == null ){
 				//不需要做任何事情
 				unModifyCount = unModifyCount + 1;
 			}else{
@@ -739,7 +751,7 @@ public class ScheduleDataManager4ZK implements IScheduleDataManager {
 	}
 	public void assignTaskItem22(String taskType, String currentUuid,
 			List<String> serverList) throws Exception {
-		 if(this.isLeader(currentUuid,serverList)==false){
+		 if(!this.isLeader(currentUuid, serverList)){
 			 if(log.isDebugEnabled()){
 			   log.debug(currentUuid +":不是负责任务分配的Leader,直接返回");
 			 }
@@ -782,7 +794,7 @@ public class ScheduleDataManager4ZK implements IScheduleDataManager {
 			if(curServerValue == null){
 				this.getZooKeeper().setData(zkPath + "/" + name + "/cur_server",serverList.get(point).getBytes(),-1);
 				this.getZooKeeper().setData(zkPath + "/" + name + "/req_server",null,-1);
-			}else if(new String(curServerValue).equals(serverList.get(point))==true && reqServerValue == null ){
+			}else if(new String(curServerValue).equals(serverList.get(point)) && reqServerValue == null ){
 				//不需要做任何事情
 				unModifyCount = unModifyCount + 1;
 			}else{
@@ -803,7 +815,7 @@ public class ScheduleDataManager4ZK implements IScheduleDataManager {
 		 }
 	}
 	public void registerScheduleServer(ScheduleServer server) throws Exception {
-		if(server.isRegister() == true){
+		if(server.isRegister()){
 			throw new Exception(server.getUuid() + " 被重复注册");
 		}
 		String zkPath = this.PATH_BaseTaskType + "/" + server.getBaseTaskType() +"/" + server.getTaskType();
