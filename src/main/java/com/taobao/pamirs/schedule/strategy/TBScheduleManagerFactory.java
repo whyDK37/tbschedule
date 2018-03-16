@@ -86,7 +86,7 @@ public class TBScheduleManagerFactory implements ApplicationContextAware {
     }
 
     public void reInit(Properties p) throws Exception {
-        if (this.start == true || this.timer != null || this.managerMap.size() > 0) {
+        if (this.start || this.timer != null || this.managerMap.size() > 0) {
             throw new Exception("调度器有任务处理，不能重新初始化");
         }
         this.init(p);

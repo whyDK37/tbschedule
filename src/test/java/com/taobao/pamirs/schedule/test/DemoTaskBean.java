@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import com.taobao.pamirs.schedule.TraceId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +33,16 @@ public class DemoTaskBean implements IScheduleTaskDealSingle<Long> {
 		};
 	}
 
+	boolean b = false;
 	public List<Long> selectTasks(String taskParameter,String ownSign, int taskItemNum,
 			List<TaskItemDefine> queryCondition, int fetchNum) throws Exception {
+//		if(b) return null;
+
+		String traceId = TraceId.get();
 		List<Long> result = new ArrayList<Long>();
 		int num = fetchNum / queryCondition.size();
 		Random random = new Random(System.currentTimeMillis());
-		StringBuilder message = new StringBuilder("获取数据...[ownSign=" + ownSign + ",taskParameter=\"" + taskParameter + "\"]:");
+		StringBuilder message = new StringBuilder("[" + traceId + "]获取数据...[ownSign=" + ownSign + ",taskParameter=\"" + taskParameter + "\"]:");
 		boolean isFirst = true;
 		for (TaskItemDefine s : queryCondition) {
 			long taskItem = Integer.parseInt(s.getTaskItemId()) * 10000000L;
@@ -52,12 +57,15 @@ public class DemoTaskBean implements IScheduleTaskDealSingle<Long> {
 			message.append(s.getTaskItemId()).append("{").append(s.getParameter()).append("}");
 		}
 		log.info(message.toString());
+
+		b = true;
 		return result;
 	}
 
 	public boolean execute(Long task, String ownSign) throws Exception {
 		Thread.sleep(50);
-		log.info("处理任务["+ownSign+"]:" + task);
+		String traceId = TraceId.get();
+		log.info("[" + traceId + "] 处理任务[" + ownSign + "]:" + task);
 		return true;
 	}
 }
