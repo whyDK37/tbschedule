@@ -54,6 +54,7 @@ public class TraceTBScheduleProcessorSleep<T> implements IScheduleProcessor, Run
     StatisticsInfo statisticsInfo;
 
     private String traceId;
+
     /**
      * 创建一个调度处理器
      *

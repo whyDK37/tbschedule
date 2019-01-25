@@ -214,9 +214,10 @@ abstract class TBScheduleManager implements IStrategyTask {
 
     /**
      * 开始的时候，计算第一次执行时间
-     *
+     * <p>
      * 最后的computerStart()方法是实现周期执行的关键，TBSchedule基于cronExpression表达式实现周期性调度，
      * 执行类型分为两种TYPE_PAUSE，TYPE_RESUME。并更新setNextRunStartTime和setNextRunEndTime。
+     *
      * @throws Exception
      */
     public void computerStart() throws Exception {

@@ -1,3 +1,3 @@
 <%
-response.sendRedirect("schedule/index.jsp");
- %>
+    response.sendRedirect("schedule/index.jsp");
+%>

@@ -9,20 +9,21 @@ import org.unitils.spring.annotation.SpringBeanByName;
 
 /**
  * 调度测试, 测试在调度中增加 trace id, 便于追踪调用链
- * @author xuannan
  *
+ * @author xuannan
  */
-@SpringApplicationContext( { "schedule-trace.xml" })
-public class TraceStartDemoSchedule extends UnitilsJUnit4{
-	@SpringBeanByName
-	TBScheduleManagerFactory scheduleManagerFactory;
-	
+@SpringApplicationContext({"schedule-trace.xml"})
+public class TraceStartDemoSchedule extends UnitilsJUnit4 {
+    @SpringBeanByName
+    TBScheduleManagerFactory scheduleManagerFactory;
+
     public void setScheduleManagerFactory(
-			TBScheduleManagerFactory tbScheduleManagerFactory) {
-		this.scheduleManagerFactory = tbScheduleManagerFactory;
-	}
-	@Test    
-	public void testRunData() throws Exception {
-		Thread.sleep(100000000000000L);
-	}
+            TBScheduleManagerFactory tbScheduleManagerFactory) {
+        this.scheduleManagerFactory = tbScheduleManagerFactory;
+    }
+
+    @Test
+    public void testRunData() throws Exception {
+        Thread.sleep(100000000000000L);
+    }
 }
