@@ -302,7 +302,8 @@ public class CronExpression implements Serializable, Cloneable {
 
         Date newDate = null;
 
-        //TODO: (QUARTZ-481) IMPROVE THIS! The following is a BAD solution to this problem. Performance will be very bad here, depending on the cron expression. It is, however A solution.
+        //TODO: (QUARTZ-481) IMPROVE THIS! The following is a BAD solution to this problem.
+        //  Performance will be very bad here, depending on the cron expression. It is, however A solution.
 
         //keep getting the next included time until it's farther than one second
         // apart. At that point, lastDate is the last valid fire time. We return
@@ -1420,7 +1421,7 @@ public class CronExpression implements Serializable, Cloneable {
             } else if (dayOfWSpec && !dayOfMSpec) { // get day by day of week rule
                 if (lastdayOfWeek) { // are we looking for the last XXX day of
                     // the month?
-                    int dow = ((Integer) daysOfWeek.first()).intValue(); // desired
+                    int dow = (Integer) daysOfWeek.first(); // desired
                     // d-o-w
                     int cDow = cl.get(Calendar.DAY_OF_WEEK); // current d-o-w
                     int daysToAdd = 0;
@@ -1463,7 +1464,7 @@ public class CronExpression implements Serializable, Cloneable {
 
                 } else if (nthdayOfWeek != 0) {
                     // are we looking for the Nth XXX day in the month?
-                    int dow = ((Integer) daysOfWeek.first()).intValue(); // desired
+                    int dow = (Integer) daysOfWeek.first(); // desired
                     // d-o-w
                     int cDow = cl.get(Calendar.DAY_OF_WEEK); // current d-o-w
                     int daysToAdd = 0;
@@ -1509,9 +1510,9 @@ public class CronExpression implements Serializable, Cloneable {
                     int cDow = cl.get(Calendar.DAY_OF_WEEK); // current d-o-w
                     int dow = ((Integer) daysOfWeek.first()).intValue(); // desired
                     // d-o-w
-                    st = daysOfWeek.tailSet(new Integer(cDow));
-                    if (st != null && st.size() > 0) {
-                        dow = ((Integer) st.first()).intValue();
+                    st = daysOfWeek.tailSet(cDow);
+                    if (st.size() > 0) {
+                        dow = (Integer) st.first();
                     }
 
                     int daysToAdd = 0;

@@ -17,7 +17,7 @@ import java.util.Random;
  * @author xuannan
  */
 public class DemoTaskBean implements IScheduleTaskDealSingle<Long> {
-    protected static transient Logger log = LoggerFactory.getLogger(DemoTaskBean.class);
+    protected static transient Logger logger = LoggerFactory.getLogger(DemoTaskBean.class);
 
     public Comparator<Long> getComparator() {
         return new Comparator<Long>() {
@@ -35,6 +35,8 @@ public class DemoTaskBean implements IScheduleTaskDealSingle<Long> {
 
     public List<Long> selectTasks(String taskParameter, String ownSign, int taskItemNum,
                                   List<TaskItemDefine> queryCondition, int fetchNum) throws Exception {
+        logger.info("taskParameter:{}, ownSign:{}, taskItemNum:{}, queryCondition:{}, fetchNum:{}",
+                taskParameter, ownSign);
 //		if(b) return null;
 
         String traceId = TraceId.get();
@@ -55,7 +57,7 @@ public class DemoTaskBean implements IScheduleTaskDealSingle<Long> {
             }
             message.append(s.getTaskItemId()).append("{").append(s.getParameter()).append("}");
         }
-        log.info(message.toString());
+        logger.info(message.toString());
 
         b = true;
         return result;
@@ -64,7 +66,7 @@ public class DemoTaskBean implements IScheduleTaskDealSingle<Long> {
     public boolean execute(Long task, String ownSign) throws Exception {
         Thread.sleep(50);
         String traceId = TraceId.get();
-        log.info("[" + traceId + "] 处理任务[" + ownSign + "]:" + task);
+        logger.info("[" + traceId + "] 处理任务[" + ownSign + "]:" + task);
         return true;
     }
 }

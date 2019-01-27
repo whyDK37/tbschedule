@@ -28,7 +28,7 @@ public class ScheduleTaskType implements java.io.Serializable {
     /**
      * 判断一个服务器死亡的周期。为了安全，至少是心跳周期的两倍以上
      */
-    private long judgeDeadInterval = 1 * 60 * 1000;//2分钟
+    private long judgeDeadInterval = 60 * 1000;//2分钟
 
     /**
      * 当没有数据的时候，休眠的时间
@@ -143,7 +143,7 @@ public class ScheduleTaskType implements java.io.Serializable {
         if (start < str.length()) {
             list.add(str.substring(start).trim());
         }
-        return (String[]) list.toArray(new String[0]);
+        return list.toArray(new String[0]);
     }
 
     public long getVersion() {

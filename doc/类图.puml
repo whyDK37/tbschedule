@@ -1,0 +1,28 @@
+@startuml
+
+class 同步日志 {
+-recodeId
+-recodeNo;//记录编号
+}
+
+class 同步日志明细 {
+-recodeId
+-taskCount;//任务个数
+}
+class 同步任务{
+-businessNo//业务Id
+}
+class 库存流水{
+-opType
+-channel
+}
+
+同步日志 "1" --> "N" 同步日志明细
+
+同步日志明细 "1" --> "3" 同步任务
+
+中台库存 "1" --> "N"  库存流水
+中台库存 "1" --> "3"  三方平台库存
+
+
+@enduml

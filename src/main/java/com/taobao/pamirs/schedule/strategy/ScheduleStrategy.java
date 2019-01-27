@@ -52,6 +52,9 @@ public class ScheduleStrategy {
         return assignNum;
     }
 
+    /**
+     * 指定需要执行调度的机器数量
+     */
     public void setAssignNum(int assignNum) {
         this.assignNum = assignNum;
     }

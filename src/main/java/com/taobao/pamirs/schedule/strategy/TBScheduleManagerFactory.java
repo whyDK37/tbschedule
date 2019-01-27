@@ -1,21 +1,5 @@
 package com.taobao.pamirs.schedule.strategy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.apache.zookeeper.ZooKeeper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-
 import com.taobao.pamirs.schedule.ConsoleManager;
 import com.taobao.pamirs.schedule.IScheduleTaskDeal;
 import com.taobao.pamirs.schedule.ScheduleUtil;
@@ -24,6 +8,17 @@ import com.taobao.pamirs.schedule.taskmanager.TBScheduleManagerStatic;
 import com.taobao.pamirs.schedule.zk.ScheduleDataManager4ZK;
 import com.taobao.pamirs.schedule.zk.ScheduleStrategyDataManager4ZK;
 import com.taobao.pamirs.schedule.zk.ZKManager;
+import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 调度服务器构造器
@@ -140,8 +135,6 @@ public class TBScheduleManagerFactory implements ApplicationContextAware {
     /**
      * 创建调度服务器
      *
-     * @param baseTaskType
-     * @param ownSign
      * @return
      * @throws Exception
      */
@@ -170,10 +163,10 @@ public class TBScheduleManagerFactory implements ApplicationContextAware {
         this.lock.lock();
         try {
             // 判断状态是否终止
-            ManagerFactoryInfo stsInfo = null;
+            ManagerFactoryInfo factoryInfo = null;
             boolean isException = false;
             try {
-                stsInfo = this.getScheduleStrategyManager().loadManagerFactoryInfo(this.getUuid());
+                factoryInfo = this.getScheduleStrategyManager().loadManagerFactoryInfo(this.getUuid());
             } catch (Exception e) {
                 isException = true;
                 logger.error("获取服务器信息有误：uuid=" + this.getUuid(), e);
@@ -185,7 +178,7 @@ public class TBScheduleManagerFactory implements ApplicationContextAware {
                 } finally {
                     reRegisterManagerFactory();
                 }
-            } else if (!stsInfo.isStart()) {
+            } else if (!factoryInfo.isStart()) {
                 stopServer(null); // 停止所有的调度任务
                 this.getScheduleStrategyManager().unRregisterManagerFactory(this);
             } else {
@@ -282,12 +275,11 @@ public class TBScheduleManagerFactory implements ApplicationContextAware {
     /**
      * 终止一类任务
      *
-     * @param taskType
      * @throws Exception
      */
     public void stopServer(String strategyName) throws Exception {
         if (strategyName == null) {
-            String[] nameList = (String[]) this.managerMap.keySet().toArray(new String[0]);
+            String[] nameList = this.managerMap.keySet().toArray(new String[0]);
             for (String name : nameList) {
                 for (IStrategyTask task : this.managerMap.get(name)) {
                     try {

@@ -1,24 +1,18 @@
 package com.taobao.pamirs.schedule.zk;
 
-import java.io.Writer;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.ZooKeeper;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.taobao.pamirs.schedule.strategy.ManagerFactoryInfo;
 import com.taobao.pamirs.schedule.strategy.ScheduleStrategy;
 import com.taobao.pamirs.schedule.strategy.ScheduleStrategyRunntime;
 import com.taobao.pamirs.schedule.strategy.TBScheduleManagerFactory;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.ZooKeeper;
+
+import java.io.Writer;
+import java.sql.Timestamp;
+import java.util.*;
 
 public class ScheduleStrategyDataManager4ZK {
 
@@ -58,7 +52,7 @@ public class ScheduleStrategyDataManager4ZK {
         if (this.getZooKeeper().exists(zkPath, false) == null) {
             this.getZooKeeper().create(zkPath, valueString.getBytes(), this.zkManager.getAcl(), CreateMode.PERSISTENT);
         } else {
-            throw new Exception("调度策略" + scheduleStrategy.getStrategyName() + "已经存在,如果确认需要重建，请先调用deleteMachineStrategy(String taskType)删除");
+            throw new Exception("调度策略" + scheduleStrategy.getStrategyName() + "已经存在,如果确认需要重建，请先调用 deleteMachineStrategy(String taskType)删除");
         }
     }
 
@@ -92,7 +86,7 @@ public class ScheduleStrategyDataManager4ZK {
 
     public void deleteMachineStrategy(String taskType, boolean isForce) throws Exception {
         String zkPath = this.PATH_Strategy + "/" + taskType;
-        if (isForce == false && this.getZooKeeper().getChildren(zkPath, null).size() > 0) {
+        if (!isForce && this.getZooKeeper().getChildren(zkPath, null).size() > 0) {
             throw new Exception("不能删除" + taskType + "的运行策略，会导致必须重启整个应用才能停止失去控制的调度进程。" +
                     "可以先清空IP地址，等所有的调度器都停止后再删除调度策略");
         }
@@ -128,6 +122,7 @@ public class ScheduleStrategyDataManager4ZK {
             String zkPath = this.PATH_ManagerFactory + "/" + managerFactory.getUuid();
             if (this.getZooKeeper().exists(zkPath, false) == null) {
                 zkPath = this.getZooKeeper().create(zkPath, null, this.zkManager.getAcl(), CreateMode.EPHEMERAL);
+                managerFactory.setUuid(zkPath.substring(zkPath.lastIndexOf("/") + 1));
             }
         }
 
@@ -183,7 +178,7 @@ public class ScheduleStrategyDataManager4ZK {
             byte[] value = this.getZooKeeper().getData(zkPath, false, null);
             if (value != null) {
                 String valueString = new String(value);
-                result = (ScheduleStrategyRunntime) this.gson.fromJson(valueString, ScheduleStrategyRunntime.class);
+                result = this.gson.fromJson(valueString, ScheduleStrategyRunntime.class);
                 if (null == result) {
                     throw new Exception("gson 反序列化异常,对象为null");
                 }

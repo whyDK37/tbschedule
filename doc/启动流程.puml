@@ -1,0 +1,21 @@
+@startuml
+
+TBScheduleManagerFactory --> TBScheduleManagerFactory: init()
+TBScheduleManagerFactory --> ZKManager: 初始化
+
+loop init thread
+TBScheduleManagerFactory -> InitialThread: start()
+ZKManager <-- InitialThread: checkZookeeperState()
+TBScheduleManagerFactory <-- InitialThread: initialData
+
+TBScheduleManagerFactory --> ScheduleStrategyDataManager4ZK: 注册调度管理器 this.scheduleStrategyManager.registerManagerFactory(this);
+
+TBScheduleManagerFactory --> ManagerFactoryTimerTask: 启动定时任务刷新worker任务
+    loop 2 second
+    ManagerFactoryTimerTask --> TBScheduleManagerFactory: refresh()
+    TBScheduleManagerFactory --> TBScheduleManagerFactory: reRegisterManagerFactory():核心方法
+    TBScheduleManagerFactory --> TBScheduleManagerFactory: assignScheduleServer()
+    TBScheduleManagerFactory --> TBScheduleManagerFactory: reRunScheduleServer()
+    end
+end
+@enduml

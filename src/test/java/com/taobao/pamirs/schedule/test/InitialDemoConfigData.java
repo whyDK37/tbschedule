@@ -22,9 +22,30 @@ public class InitialDemoConfigData extends UnitilsJUnit4 {
         this.scheduleManagerFactory = tbScheduleManagerFactory;
     }
 
+    String baseTaskTypeName = "DemoTask";
+    String beanName = "demoTaskBean";
+
+    String taskName = baseTaskTypeName + "$TEST";
+    String strategyName = baseTaskTypeName + "-Strategy";
+
     @Test
-    public void initialConfigData() throws Exception {
-        String baseTaskTypeName = "DemoTask";
+    public void deleteMachineStrategy() throws Exception {
+        scheduleManagerFactory.start = false;
+        while (!this.scheduleManagerFactory.isZookeeperInitialSucess()) {
+            Thread.sleep(1000);
+        }
+        scheduleManagerFactory.stopServer(null);
+        Thread.sleep(1000);
+        try {
+            this.scheduleManagerFactory.getScheduleStrategyManager()
+                    .deleteMachineStrategy(strategyName, true);
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Test
+    public void deleteTaskType() throws Exception {
         while (!this.scheduleManagerFactory.isZookeeperInitialSucess()) {
             Thread.sleep(1000);
         }
@@ -33,13 +54,25 @@ public class InitialDemoConfigData extends UnitilsJUnit4 {
         try {
             this.scheduleManagerFactory.getScheduleDataManager()
                     .deleteTaskType(baseTaskTypeName);
+
+            this.scheduleManagerFactory.getScheduleStrategyManager()
+                    .deleteMachineStrategy(strategyName, true);
         } catch (Exception e) {
 
         }
+    }
+
+    @Test
+    public void initialConfigData() throws Exception {
+        while (!this.scheduleManagerFactory.isZookeeperInitialSucess()) {
+            Thread.sleep(1000);
+        }
+        scheduleManagerFactory.stopServer(null);
+        Thread.sleep(1000);
         // 创建任务调度DemoTask的基本信息
         ScheduleTaskType baseTaskType = new ScheduleTaskType();
         baseTaskType.setBaseTaskType(baseTaskTypeName);
-        baseTaskType.setDealBeanName("demoTaskBean");
+        baseTaskType.setDealBeanName(beanName);// spring 中的beanName
         baseTaskType.setHeartBeatRate(2000);
         baseTaskType.setJudgeDeadInterval(10000);
         baseTaskType.setTaskParameter("AREA=杭州,YEAR>30");
@@ -52,14 +85,7 @@ public class InitialDemoConfigData extends UnitilsJUnit4 {
         log.info("创建调度任务成功:" + baseTaskType.toString());
 
         // 创建任务DemoTask的调度策略
-        String taskName = baseTaskTypeName + "$TEST";
-        String strategyName = baseTaskTypeName + "-Strategy";
-        try {
-            this.scheduleManagerFactory.getScheduleStrategyManager()
-                    .deleteMachineStrategy(strategyName, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
         ScheduleStrategy strategy = new ScheduleStrategy();
         strategy.setStrategyName(strategyName);
         strategy.setKind(ScheduleStrategy.Kind.Schedule);

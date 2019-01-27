@@ -1,15 +1,13 @@
 package com.taobao.pamirs.schedule.taskmanager;
 
-import java.util.List;
-import java.util.Map;
-
+import com.taobao.pamirs.schedule.TaskItemDefine;
+import com.taobao.pamirs.schedule.strategy.TBScheduleManagerFactory;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.taobao.pamirs.schedule.ScheduleUtil;
-import com.taobao.pamirs.schedule.TaskItemDefine;
-import com.taobao.pamirs.schedule.strategy.TBScheduleManagerFactory;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 任务管理器
@@ -123,7 +121,7 @@ public class TBScheduleManagerStatic extends TBScheduleManager {
         try {
             rewriteScheduleInfo();
             //如果任务信息没有初始化成功，不做任务相关的处理
-            if (this.isRuntimeInfoInitial == false) {
+            if (!this.isRuntimeInfoInitial) {
                 return;
             }
 
