@@ -195,11 +195,11 @@ public class TraceTBScheduleProcessorSleep<T> implements IScheduleProcessor, Run
     @SuppressWarnings({"rawtypes", "unchecked", "static-access"})
     public void run() {
 
-        TraceId.set(traceId);
-        TraceId.get();
         try {
             long startTime = 0;
             while (true) {
+                TraceId.set(traceId);
+                TraceId.get();
                 this.m_lockObject.addThread();
                 Object executeTask;
                 while (true) {
@@ -271,6 +271,7 @@ public class TraceTBScheduleProcessorSleep<T> implements IScheduleProcessor, Run
                     Thread.currentThread().sleep(100);
                     startTime = scheduleManager.scheduleCenter.getSystemTime();
                     // 装载数据
+                    // fixme 在装载数据的时候设置，刷新traceId
                     size = this.loadScheduleData();
                     if (size > 0) {
                         this.m_lockObject.notifyOtherThread();

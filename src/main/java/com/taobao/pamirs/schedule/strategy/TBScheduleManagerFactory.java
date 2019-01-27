@@ -189,6 +189,11 @@ public class TBScheduleManagerFactory implements ApplicationContextAware {
         }
     }
 
+    /**
+     * 1,
+     *
+     * @throws Exception
+     */
     public void reRegisterManagerFactory() throws Exception {
         //重新分配调度器
         // 根据UUID，在/factory目录下查找对应目录，并在/strategy目录下更具IP数组，
@@ -198,7 +203,7 @@ public class TBScheduleManagerFactory implements ApplicationContextAware {
         for (String strategyName : stopList) {
             this.stopServer(strategyName);//停止对应的调度处理器
         }
-        //根据策略重新分配调度任务机器的任务数，并在zk上更新对应的ScheduleStrategyRunntime中的AssignNum
+        //根据策略重新分配调度任务机器的任务数，并在zk上更新对应的 ScheduleStrategyRuntime 中的AssignNum
         this.assignScheduleServer();
         //注意，一个strategyName下只有唯一表示当前调度服务器的节点（IP+$+HostName+$+UUID+$Sequence）
         //同时一个strategyName对应该调度服务器多个IStrategyTask任务管理器，一个taskItem对应一个任务管理器

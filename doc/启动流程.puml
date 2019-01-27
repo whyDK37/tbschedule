@@ -16,6 +16,9 @@ TBScheduleManagerFactory --> ManagerFactoryTimerTask: 启动定时任务刷新wo
     TBScheduleManagerFactory --> TBScheduleManagerFactory: reRegisterManagerFactory():核心方法
     TBScheduleManagerFactory --> TBScheduleManagerFactory: assignScheduleServer()
     TBScheduleManagerFactory --> TBScheduleManagerFactory: reRunScheduleServer()
+    TBScheduleManagerFactory --> TBScheduleManagerFactory: createStrategyTask()
+    TBScheduleManagerFactory --> TBScheduleManagerStatic: create TBScheduleManagerStatic， 具体的任务管理器.
+    TBScheduleManagerStatic --> HeartBeatTimerTask: construct()
     end
 end
 @enduml

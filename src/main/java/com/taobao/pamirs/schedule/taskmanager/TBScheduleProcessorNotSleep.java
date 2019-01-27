@@ -275,7 +275,7 @@ class TBScheduleProcessorNotSleep<T> implements IScheduleProcessor, Runnable {
                         "TBScheduleProcessor.loadScheduleData");
                 if (taskList.size() <= 0) {
                     // 判断当没有数据的是否，是否需要退出调度
-                    if (this.scheduleManager.isContinueWhenData() == true) {
+                    if (this.scheduleManager.isContinueWhenData()) {
                         if (taskTypeInfo.getSleepTimeNoData() > 0) {
                             if (logger.isDebugEnabled()) {
                                 logger.debug("没有读取到需要处理的数据,sleep "
@@ -334,7 +334,7 @@ class TBScheduleProcessorNotSleep<T> implements IScheduleProcessor, Runnable {
         Object executeTask = null;
         while (true) {
             try {
-                if (this.isStopSchedule == true) { // 停止队列调度
+                if (this.isStopSchedule) { // 停止队列调度
                     synchronized (this.threadList) {
                         this.threadList.remove(Thread.currentThread());
                         if (this.threadList.size() == 0) {
@@ -344,7 +344,7 @@ class TBScheduleProcessorNotSleep<T> implements IScheduleProcessor, Runnable {
                     return;
                 }
                 // 加载调度任务
-                if (this.isMutilTask == false) {
+                if (!this.isMutilTask) {
                     executeTask = this.getScheduleTaskId();
                 } else {
                     executeTask = this.getScheduleTaskIdMulti();
